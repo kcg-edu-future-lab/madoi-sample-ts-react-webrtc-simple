@@ -99,7 +99,7 @@ export class RtcPeer extends TypedCustomEventTarget<RtcPeer, {
     } else if(signal?.type === "answer"){
       this.receiveAnswer(signal);
     } else if(signal?.type === "pranswer" || signal?.type === "rollback"){
-
+      console.error("[RtcPeer.receiveSignal] unexpected signal", signal);
     } else{
       this.receiveIceCandidate(signal as RTCIceCandidate | null);
     }
