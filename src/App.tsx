@@ -52,7 +52,7 @@ export default function App({madoi}: Props) {
   };
   // RtcPeerイベントのリスナ
   const onSendSignalNeeded: SendSignalNeededListenerOrObject = ({detail: {peerId, content}})=>{
-    console.log("[App.sendSignalNeeded] send signal", content?.type);
+    console.log("[App.onSendSignalNeeded] send signal", content?.type);
     madoi.unicast("webRtcSignal", content, peerId);
   };
   // start/stopボタンのクリックイベントのリスナ
@@ -86,7 +86,7 @@ export default function App({madoi}: Props) {
   });
 
   return <>
-    <div>
+    <div style={{border: "solid 1px", padding: "2px"}}>
       <video ref={localVideoRef} playsInline autoPlay muted width={160} height={120}></video>
       <br/>
       Local({madoi.getSelfPeerId().split("-")[0]})

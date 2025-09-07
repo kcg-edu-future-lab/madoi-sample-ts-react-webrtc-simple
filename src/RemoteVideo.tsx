@@ -50,7 +50,7 @@ export function RemoteVideo({peer}: Props){
     };
   });
 
-  return <div>
+  return <div style={{border: "solid 1px", padding: "2px"}}>
     <video ref={videoRef} playsInline autoPlay width={160} height={120}></video>
     <br/>
     Remote({peer.id.split("-")[0]})
