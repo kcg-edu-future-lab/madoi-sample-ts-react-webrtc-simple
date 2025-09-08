@@ -9,14 +9,14 @@ interface Props{
 }
 export default function App({madoi}: Props) {
   const [rtcPeers, setRtcPeers] = useState<RtcPeer[]>([]);
-  const [mediaStreams, setMediaStreams] = useState<MediaStream[]>([]);
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
 	const localVideoRef = useRef<HTMLVideoElement>(null!);
 
   // ピアを作成するメソッド
   const newRtcPeer = (peerId: string, polite: boolean)=>{
     const ret = new RtcPeer(peerId, polite);
     ret.addEventListener("sendSignalNeeded", onSendSignalNeeded);
-    mediaStreams.forEach(s=>ret.addStream(s));
+    if(mediaStream !== null) ret.addStream(mediaStream);
     return ret;
   };
   // ピアの配列から指定のピアを探すメソッド
@@ -57,17 +57,17 @@ export default function App({madoi}: Props) {
   };
   // start/stopボタンのクリックイベントのリスナ
   const onStartMediaStreamClick = async ()=>{
-    if(mediaStreams.length == 0){
+    if(mediaStream === null){
       const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
       localVideoRef.current.srcObject = stream;
       localVideoRef.current.play();
       rtcPeers.forEach(p=>p.addStream(stream));
-      setMediaStreams([stream]);
+      setMediaStream(stream);
     } else{
       (localVideoRef.current.srcObject as MediaStream).getTracks().forEach(t=>t.stop());
       localVideoRef.current.srcObject = null;
       rtcPeers.forEach(p=>p.clearStream());
-      setMediaStreams([]);
+      setMediaStream(null);
     }
   };
 
@@ -90,7 +90,7 @@ export default function App({madoi}: Props) {
       <video ref={localVideoRef} playsInline autoPlay muted width={160} height={120}></video>
       <br/>
       Local({madoi.getSelfPeerId().split("-")[0]})
-      <button onClick={onStartMediaStreamClick}>{mediaStreams.length == 0 ? "start" : "stop"}</button>
+      <button onClick={onStartMediaStreamClick}>{mediaStream === null ? "start" : "stop"}</button>
     </div>
     {rtcPeers.map(p=>
       <RemoteVideo key={p.id} peer={p} />
