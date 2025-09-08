@@ -35,7 +35,9 @@ export class RtcPeer extends TypedCustomEventTarget<RtcPeer, {
     super();
     this._id = id;
     this._polite = polite;
-    this._con = new RTCPeerConnection();
+    this._con = new RTCPeerConnection({"iceServers":[
+      {'urls': 'stun:stun.l.google.com:19302'}
+    ]});
     this._con.addEventListener("track", ({streams})=>{
       streams.forEach(s=>s.addEventListener("removetrack", ({track})=>{
         this.dispatchCustomEvent("trackRemoved", {peerId: this._id, track});
