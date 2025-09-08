@@ -17,7 +17,7 @@ WebRTCを使って映像と音声を送受信するサンプルアプリケー�
 - Madoiによるシグナリング
   - [Madoi](https://github.com/kcg-edu-future-lab/madoi)サーバを利用し、WebRTC接続の確立に必要なメッセージを送受信します。
 - 音声と映像の送信開始/停止
-  - `Start`ボタンをクリックすると、マイクとカメラを取得し、音声と映像を他の参加者に送信します。
+  - `start`ボタンをクリックすると、マイクとカメラを取得し、音声と映像の送信を開始します。開始後`stop`ボタンが表示され、クリックすると送信を停止します。
 
 ブラウザのWebRTC APIのみを仕様しており、他のライブラリやサービスは使用していません。
 
@@ -25,14 +25,14 @@ WebRTCを使って映像と音声を送受信するサンプルアプリケー�
 
 Chromeでの動作確認を行なっています。
 
-WebRTCのシグナリング(ブラウザ同士での接続に必要な情報を交換する手順)のため、はMadoiサーバが必要です。
-docker-composeを使えば(下記の`実行方法`参照)、ローカルマシン上で一式起動できます。
+WebRTCのシグナリング(ブラウザ同士での接続に必要な情報を交換する手順)を行うため、Madoiサーバが必要です。
+docker-composeを使うことで、ローカルマシン上でMadoiとこのサンプルアプリ一式を起動できます(下記の`実行方法`参照)。
 
 # 実行方法
 
 ## Madoiの起動
 
-適当なディレクトリで以下のコマンドを実行し、Madoi の madoi-volatileserver を起動してください。詳細は、[MadoiのREADME](https://github.com/kcg-edu-future-lab/madoi)を参照してください。
+適当なディレクトリで以下のコマンドを実行し、Madoi の madoi-volatileserver を起動してください。詳細は、[MadoiのREADME](https://github.com/kcg-edu-future-lab/madoi)も参照してください。
 
 
 ```bash
