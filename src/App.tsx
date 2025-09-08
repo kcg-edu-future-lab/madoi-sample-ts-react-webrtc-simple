@@ -26,7 +26,8 @@ export default function App({madoi}: Props) {
     return ret;
   };
 
-  // Madoiのセッション管理メッセージのリスナ
+  // Madoiのルーム管理メッセージのリスナ
+  //  ルームに参加した際に、既存の参加者とのWebRTC接続を開始する
   const onEnterRoomAllowed: EnterRoomAllowedListenerOrObject = ({detail: {otherPeers}})=>{
     console.log("[App.onEnterRoomAllowed]", otherPeers);
     setRtcPeers(otherPeers.map(p=>{
@@ -36,21 +37,25 @@ export default function App({madoi}: Props) {
       return rtcPeer;
     }));
   };
+  //  新しい参加者が来れば、RtcPeerオブジェクトを作成してrtcPeers配列に追加しておく。
   const onPeerEntered: PeerEnteredListenerOrObject = ({detail: {peer}})=>{
     console.log("[App.onPeerEntered]", peer.id);
     const rtcPeer = newRtcPeer(peer.id, false);
     setRtcPeers(rtcPeers=>[...rtcPeers, rtcPeer]);
   };
+  //  参加者が退室すれば、rtcPeers配列から削除しておく。
   const onPeerLeaved: PeerLeavedListenerOrObject = ({detail: {peerId}})=>{
     console.log("[App.onPeerLeaved]", peerId);
     setRtcPeers(rtcPeers=>rtcPeers.filter(p=>p.id!==peerId));
   };
   // Madoiのアプリケーションメッセージのリスナ
+  //  シグナルが届けば、対応するRtcPeerに渡す。
   const onWebRtcSignalReceived: (event: {detail: {sender?: string, content: RTCSessionDescriptionInit | RTCIceCandidate | null}})=>void = async ({detail: {sender, content}})=>{
     console.log("[App.onWebRtcSignalReceived]", sender, content?.type);
     getRtcPeer(sender!).receiveSignal(content);
   };
   // RtcPeerイベントのリスナ
+  //  RtcPeerからシグナル送信が要求されれば、Madoiで送る。
   const onSendSignalNeeded: SendSignalNeededListenerOrObject = ({detail: {peerId, content}})=>{
     console.log("[App.onSendSignalNeeded] send signal", content?.type);
     madoi.unicast("webRtcSignal", content, peerId);
@@ -58,12 +63,14 @@ export default function App({madoi}: Props) {
   // start/stopボタンのクリックイベントのリスナ
   const onStartMediaStreamClick = async ()=>{
     if(mediaStream === null){
+      // まだmediaStreamが無ければ取得して全てのrtcPeerに追加する。
       const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
       localVideoRef.current.srcObject = stream;
       localVideoRef.current.play();
       rtcPeers.forEach(p=>p.addStream(stream));
       setMediaStream(stream);
     } else{
+      // mediaStreamが存在すれば停止して全てのrtcPeerからも削除する。
       (localVideoRef.current.srcObject as MediaStream).getTracks().forEach(t=>t.stop());
       localVideoRef.current.srcObject = null;
       rtcPeers.forEach(p=>p.clearStream());
