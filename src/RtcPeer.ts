@@ -18,7 +18,7 @@ export type TrackAddedEventListenerOrObject = TypedCustomEventListenerOrObject<R
 export type TrackRemovedEventListenerOrObject = TypedCustomEventListenerOrObject<RtcPeer, TrackRemovedDetail>;
 
 /**
- * WebRTCのピア(通信相手)。
+ * WebRTCのピアに必要な処理を実装する。
  * IDと先方からのデータを受信するための入力用RTCPeerConnection、
  * 先方へデータを送信するための出力用RTCPeerConnectionを持つ。
  */
